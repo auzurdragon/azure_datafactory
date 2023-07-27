@@ -1,0 +1,17 @@
+{
+	"name": "mysql_jaffle_stores",
+	"properties": {
+		"description": "table about stores",
+		"linkedServiceName": {
+			"referenceName": "dkm_mysql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "MySqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "`jaffle_stores`"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

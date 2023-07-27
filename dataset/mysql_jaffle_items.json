@@ -1,0 +1,17 @@
+{
+	"name": "mysql_jaffle_items",
+	"properties": {
+		"description": "items实体表",
+		"linkedServiceName": {
+			"referenceName": "dkm_mysql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "MySqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "`jaffle_items`"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

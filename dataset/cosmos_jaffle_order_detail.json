@@ -1,0 +1,16 @@
+{
+	"name": "cosmos_jaffle_order_detail",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dkm_cosmos_sql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "CosmosDbSqlApiCollection",
+		"schema": {},
+		"typeProperties": {
+			"collectionName": "jaffle_order_detail"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

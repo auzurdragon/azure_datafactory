@@ -1,0 +1,17 @@
+{
+	"name": "adf-xghk-202307251358",
+	"properties": {
+		"globalParameters": {
+			"author": {
+				"type": "string",
+				"value": "DKM"
+			}
+		}
+	},
+	"location": "southeastasia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "7707b7d3-0460-4dd6-b997-8eb6f5cdad5f",
+		"tenantId": "64440703-f6ff-46a3-b71d-cc454fe0a887"
+	}
+}

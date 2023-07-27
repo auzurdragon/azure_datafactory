@@ -1,0 +1,189 @@
+{
+	"name": "dataflow jaffle_order_detail",
+	"properties": {
+		"description": "构造jaffle明细表",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "adls_jaffle_orders",
+						"type": "DatasetReference"
+					},
+					"name": "orders"
+				},
+				{
+					"dataset": {
+						"referenceName": "adls_jaffle_items",
+						"type": "DatasetReference"
+					},
+					"name": "items"
+				},
+				{
+					"dataset": {
+						"referenceName": "adls_jaffle_products",
+						"type": "DatasetReference"
+					},
+					"name": "products"
+				},
+				{
+					"dataset": {
+						"referenceName": "adls_jaffle_customers",
+						"type": "DatasetReference"
+					},
+					"name": "customers"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "adls_jaffle_order_detail",
+						"type": "DatasetReference"
+					},
+					"name": "sinkJaffleOrderDetail"
+				}
+			],
+			"transformations": [
+				{
+					"name": "joinProducts"
+				},
+				{
+					"name": "joinItems"
+				},
+				{
+					"name": "joinCustomers"
+				},
+				{
+					"name": "select"
+				},
+				{
+					"name": "cast1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id as string,",
+				"          customer as string,",
+				"          ordered_at as string,",
+				"          store_id as string,",
+				"          subtotal as short,",
+				"          tax_paid as short,",
+				"          order_total as short,",
+				"          etltm as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> orders",
+				"source(output(",
+				"          id as string,",
+				"          order_id as string,",
+				"          sku as string,",
+				"          etltm as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> items",
+				"source(output(",
+				"          sku as string,",
+				"          name as string,",
+				"          type as string,",
+				"          price as short,",
+				"          description as string,",
+				"          etltm as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> products",
+				"source(output(",
+				"          id as string,",
+				"          name as string,",
+				"          etltm as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> customers",
+				"items, products join(items@sku == products@sku,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinProducts",
+				"orders, joinProducts join(orders@id == order_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinItems",
+				"joinItems, customers join(customer == customers@id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinCustomers",
+				"joinCustomers select(mapColumn(",
+				"          order_id = orders@id,",
+				"          customer_id = customer,",
+				"          ordered_at,",
+				"          store_id,",
+				"          order_subtotal = subtotal,",
+				"          order_tax_paid = tax_paid,",
+				"          order_total,",
+				"          item_id = items@id,",
+				"          order_id,",
+				"          sku = items@sku,",
+				"          product_name = products@name,",
+				"          product_type = type,",
+				"          product_price = price,",
+				"          product_description = description,",
+				"          customer_name = customers@name",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select",
+				"select cast(output(",
+				"          order_id as string,",
+				"          customer_id as string,",
+				"          ordered_at as string,",
+				"          store_id as string,",
+				"          order_subtotal as short,",
+				"          order_tax_paid as short,",
+				"          order_total as short,",
+				"          item_id as string,",
+				"          sku as string,",
+				"          product_name as string,",
+				"          product_type as string,",
+				"          product_price as short,",
+				"          product_description as string,",
+				"          customer_name as string",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          order_id as string,",
+				"          customer_id as string,",
+				"          ordered_at as string,",
+				"          store_id as string,",
+				"          order_subtotal as string,",
+				"          order_tax_paid as string,",
+				"          order_total as string,",
+				"          etltm as string,",
+				"          item_id as string,",
+				"          sku as string,",
+				"          product_name as string,",
+				"          product_type as string,",
+				"          product_price as string,",
+				"          product_description as string,",
+				"          id as string,",
+				"          customer_name as string,",
+				"          store_name as string,",
+				"          store_opened_at as string,",
+				"          store_tax_rate as string",
+				"     ),",
+				"     partitionFileNames:['jaffle_order_detail.csv'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkJaffleOrderDetail"
+			]
+		}
+	}
+}

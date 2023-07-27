@@ -1,0 +1,25 @@
+{
+	"name": "adls_jaffle_order_daily",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dkm_AzureDataLakeStorage_xghk",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "jaffle_order_daily.csv",
+				"folderPath": "jaffle",
+				"fileSystem": "xghk"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
